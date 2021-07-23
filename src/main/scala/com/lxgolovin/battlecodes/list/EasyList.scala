@@ -51,7 +51,7 @@ sealed trait EasyList[+A] {
   }
 
   def foldRightUsingFoldLeftFreak[B](x: B)(op: (A, B) => B): B = {
-    foldLeft[B => B](identity)((acc, a) => b => acc(op(a,b)))(x)
+    foldLeft[B => B](b => b)((acc, a) => b => acc(op(a,b)))(x)
   }
 
   def foldLeftUsingFoldRight[B](x: B)(op: (B, A) => B): B = {
