@@ -20,6 +20,21 @@ sealed trait EasyList[+A] {
     }
   }
 
+  override def toString: String = self.mkString()
+
+  def mkString(splitter: String = ", "): String = {
+    "EasyList(" + self.concatenateString(splitter) + ")"
+//    self.getClass.getSimpleName + "(" + self.concatenateString(splitter) + ")"
+  }
+
+  private def concatenateString(splitter: String): String = {
+    self match {
+      case Empty          => ""
+      case Cons(h, Empty) => h.toString
+      case Cons(h, t)     => h.toString + splitter + t.concatenateString(splitter)
+    }
+  }
+
   def flatMap[B](f: A => EasyList[B]): EasyList[B] = {
     self match {
       case Empty      => Empty

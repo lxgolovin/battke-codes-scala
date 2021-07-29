@@ -140,4 +140,28 @@ class EasyListTest extends AnyFlatSpec {
     assert(easyList.foldRightUsingFoldLeftFreak(5)(_ - _) == res)
     assert(res1 == res)
   }
+
+  "toString method of the empty list" should "return 'EasyList()'" in {
+    val expected = "EasyList()"
+    val easyList = Empty
+    assert(expected == easyList.toString)
+  }
+
+  "toString method of the one element list" should "return 'EasyList(1)'" in {
+    val expected = "EasyList(1)"
+    val easyList = EasyList(1)
+    assert(expected == easyList.toString)
+  }
+
+  "toString method of many elements list" should "return 'EasyList(1, 3)'" in {
+    val expected = "EasyList(1, 3)"
+    val easyList = EasyList(1, 3)
+    assert(expected == easyList.toString)
+  }
+
+  "mkString method of many elements list with : splitter" should "return 'EasyList(1:3)'" in {
+    val expected = "EasyList(1:3)"
+    val easyList = EasyList(1, 3)
+    assert(expected == easyList.mkString(":"))
+  }
 }
