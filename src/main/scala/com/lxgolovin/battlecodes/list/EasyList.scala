@@ -8,21 +8,21 @@ sealed trait EasyList[+A] {
 
   def first: Option[A] = {
     self match {
-      case Empty => None
-      case Cons(head, _)=> Some(head)
+      case Empty         => None
+      case Cons(head, _) => Some(head)
     }
   }
 
   def map[B](f: A => B): EasyList[B] = {
     self match {
-      case Empty => Empty
+      case Empty      => Empty
       case Cons(h, t) => Cons(f(h), t.map(f))
     }
   }
 
   def flatMap[B](f: A => EasyList[B]): EasyList[B] = {
     self match {
-      case Empty => Empty
+      case Empty      => Empty
       case Cons(h, t) => f(h) ++ t.flatMap(f)
     }
   }
@@ -31,27 +31,27 @@ sealed trait EasyList[+A] {
 //    self.foldLeft(Cons[B]())(_ ++ f(_))
 //  }
 
-  def ++[AA >: A](otherList: EasyList[AA]) : EasyList[AA] = {
+  def ++[AA >: A](otherList: EasyList[AA]): EasyList[AA] = {
     self match {
-      case Empty => otherList
+      case Empty            => otherList
       case Cons(head, tail) => Cons(head, tail ++ otherList)
     }
   }
 
   def foldLeft[B](x: B)(op: (B, A) => B): B = {
     self match {
-      case Empty => x
+      case Empty      => x
       case Cons(h, t) => t.foldLeft(op(x, h))(op)
     }
   }
 
   def foldRightUsingFoldLeft[B](x: B)(op: (A, B) => B): B = {
-    val result = foldLeft(identity: B => B)((acc: B => B, a: A) => (b: B) => acc(op(a,b)))
+    val result = foldLeft(identity: B => B)((acc: B => B, a: A) => (b: B) => acc(op(a, b)))
     result(x)
   }
 
   def foldRightUsingFoldLeftFreak[B](x: B)(op: (A, B) => B): B = {
-    foldLeft[B => B](b => b)((acc, a) => b => acc(op(a,b)))(x)
+    foldLeft[B => B](b => b)((acc, a) => b => acc(op(a, b)))(x)
   }
 
   def foldLeftUsingFoldRight[B](x: B)(op: (B, A) => B): B = {
@@ -65,7 +65,7 @@ sealed trait EasyList[+A] {
 
   def foldRight[B](x: B)(op: (A, B) => B): B = {
     self match {
-      case Empty => x
+      case Empty      => x
       case Cons(h, t) => op(h, t.foldRight(x)(op))
     }
   }
@@ -73,7 +73,7 @@ sealed trait EasyList[+A] {
 
 case class Cons[+A](head: A, tail: EasyList[A]) extends EasyList[A]
 
-object Cons {
+object EasyList {
   def apply[A](items: A*): EasyList[A] = {
     if (items.isEmpty) {
       Empty
@@ -87,4 +87,3 @@ object Empty extends EasyList[Nothing] {
   override def head = throw new NoSuchElementException("No head in the empty list")
   override def tail = throw new NoSuchElementException("No tail in the empty list")
 }
-
