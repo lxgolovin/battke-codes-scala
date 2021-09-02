@@ -1,1 +1,1 @@
-# battke-codes-scala
+# scala-party tasks
