@@ -1,4 +1,4 @@
-package com.lxgolovin.battlecodes.list
+package com.lxgolovin.scala.party.list
 
 sealed trait EasyList[+A] {
   self =>
@@ -86,8 +86,6 @@ sealed trait EasyList[+A] {
   }
 }
 
-case class Cons[+A](head: A, tail: EasyList[A]) extends EasyList[A]
-
 object EasyList {
   def apply[A](items: A*): EasyList[A] = {
     if (items.isEmpty) {
@@ -97,6 +95,8 @@ object EasyList {
     }
   }
 }
+
+case class Cons[+A](head: A, tail: EasyList[A]) extends EasyList[A]
 
 object Empty extends EasyList[Nothing] {
   override def head = throw new NoSuchElementException("No head in the empty list")

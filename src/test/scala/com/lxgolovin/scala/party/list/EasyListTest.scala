@@ -1,4 +1,4 @@
-package com.lxgolovin.battlecodes.list
+package com.lxgolovin.scala.party.list
 
 import org.scalatest.flatspec.AnyFlatSpec
 
