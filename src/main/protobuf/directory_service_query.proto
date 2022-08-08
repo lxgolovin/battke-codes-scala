@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+import "types.proto";
+
+package proto.com.cleverbase.core.platform.directory.service.query.service;
+
+service DirectoryServiceQuery {
+  rpc QueryNaturalPersonProfile  (QueryNaturalPersonProfileRequest) returns (QueryNaturalPersonProfileResponse);
+  rpc QueryNaturalPersonProfiles (QueryNaturalPersonProfilesRequest) returns (QueryNaturalPersonProfilesResponse);
+  rpc QueryAssociatedIdentities  (QueryAssociatedIdentitiesRequest) returns (QueryAssociatedIdentitiesResponse); // empty list
+
+  rpc QueryClaimsByAttributeKey  (QueryClaimsByAttributeKeyRequest) returns (QueryClaimsByAttributeKeyResponse);
+  rpc QueryCertificates          (QueryCertificatesRequest) returns (QueryCertificatesResponse);
+
+  rpc QuerySecurityPrincipal     (QuerySecurityPrincipalRequest) returns (QuerySecurityPrincipalResponse);
+}
+
+message QueryClaimsByAttributeKeyRequest {
+  SessionId session_id = 1;
+  Identity identity = 2;
+  repeated AttributeKey attributeKeys = 3;
+}
+message QueryNaturalPersonProfileRequest {
+  SessionId session_id = 1;
+}
+message QueryNaturalPersonProfilesRequest {
+  SessionId session_id = 1;
+  repeated Attribute attribute = 2;
+}
+message QueryCertificatesRequest {
+  SessionId session_id = 1;
+  Identity identity = 2;
+}
+message QueryAssociatedIdentitiesRequest {
+  SessionId session_id = 1;
+}
+message QuerySecurityPrincipalRequest {
+  Signer signer = 1;
+}
+
+message QueryProfileRejection{
+  enum Reason {
+    SESSION_NOT_FOUND = 0;
+    NOT_MATCHING_PROFILE = 1;
+    NOT_AUTHORIZED = 2;
+  }
+  Reason reason = 1;
+}
+
+message QueryClaimsRejection{
+  enum Reason {
+    NOT_MATCHING_PROFILE = 0;
+    IDENTITY_NOT_ACTIVE = 1;
+    SOME_ATTRIBUTE_ARE_UNDEFINED = 2;
+    NOT_AUTHORIZED = 3;
+  }
+  Reason reason = 1;
+}
+
+message QuerySecurityPrincipalRejection{
+  enum Reason {
+    PRINCIPAL_NOT_FOUND = 0;
+  }
+  Reason reason = 1;
+}
+
+
+message QueryClaimsByAttributeKeyResponse {
+  message Attributes {
+    repeated Attribute attributes = 1;
+  }
+
+  oneof value {
+    Attributes attributes = 1;
+    QueryClaimsRejection rejection = 2;
+    ValidationErrors errors = 3;
+  }
+}
+
+message QueryNaturalPersonProfileResponse {
+  oneof value {
+    NaturalPersonProfile naturalPersonProfile = 1;
+    ValidationErrors errors = 2;
+    QueryProfileRejection rejection = 3;
+  }
+}
+message QueryNaturalPersonProfilesResponse {
+  message NaturalPersonProfiles {
+    repeated NaturalPersonProfile naturalPersonProfile = 1;
+  }
+  oneof value {
+    NaturalPersonProfiles naturalPersonProfiles = 1;
+    ValidationErrors errors = 2;
+    QueryProfileRejection rejection = 3;
+  }
+}
+message QueryCertificatesResponse {
+  message X509CertificateProfiles {
+    repeated X509CertificateProfile x509CertificateProfile = 1;
+  }
+  oneof value {
+    X509CertificateProfiles x509CertificateProfiles = 1;
+    ValidationErrors errors = 2;
+    QueryProfileRejection rejection = 3;
+  }
+}
+message QueryAssociatedIdentitiesResponse {
+  message Identities {
+    repeated Identity identity = 1;
+  }
+  oneof value {
+    Identities identities = 1;
+    ValidationErrors errors = 2;
+  }
+}
+message QuerySecurityPrincipalResponse {
+  oneof value {
+    IdentitySecurityPrincipal principal = 1;
+    ValidationErrors errors = 2;
+    QuerySecurityPrincipalRejection rejection = 3;
+  }
+}

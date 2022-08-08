@@ -9,11 +9,13 @@ trait MonoidLike[A] {
 
 object MonoidLike {
 
+  val x = 1
+
   implicit val addableToInt: MonoidLike[Int] = new MonoidLike[Int] {
 
     override def add(a: Int, aa: Int): Int = a + aa
 
-    override def empty: Int = 0
+    override val empty: Int = 0
   }
 
   implicit val addableToString: MonoidLike[String] = new MonoidLike[String] {

@@ -1,0 +1,63 @@
+{
+  'statusTransitions': {
+    $elemMatch: {
+      reason: "RO_INITIATED",
+      target: {
+        $in: ["READY_FOR_CALL", "CLOSED"]
+      }
+    }
+  }
+}
+
+{
+  "id": "d3239f7e-15a7-44b2-9eb6-121770077d51"
+}
+
+{
+  "id" : "fbbdfa4e-510d-4873-b67b-c45fabe639f9"
+}
+
+
+id:"91ac889b-9c22-43c3-8e8c-3a7a63974f70"
+
+{
+  from: 'officers',
+        let: {base_id: "$id"},
+  pipeline: [{
+        $match: {
+        $expr: {
+        $eq: ["$baseID", "$$base_id"]
+}
+}
+}],
+  as: 'ids'
+}
+
+{
+from: 'officers',
+let: {base_id: "$id"},
+pipeline: [{
+$match: {
+$expr: {
+$and: [
+{$eq: ["$baseID", "$$base_id"]},
+{$eq: ["$id", "91ac889b-9c22-43c3-8e8c-3a7a63974f70"]}
+        ]
+}
+}
+}],
+as: 'ids'
+}
+
+
+
+
+{
+$lookup:
+{
+from: bases,
+localField: ,
+    foreignField: <field from the documents of the "from" collection>,
+    as: <output array field>
+  }
+}

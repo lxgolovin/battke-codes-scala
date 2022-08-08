@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+import "types.proto";
+
+package proto.com.cleverbase.core.platform.directory.service.command.service;
+
+service DirectoryServiceCommands {
+    rpc RecordCredential (RecordCredentialRequest) returns (RecordCredentialResponse);
+    rpc SuspendCredential (SuspendCredentialRequest) returns (SuspendCredentialResponse);
+    rpc SuspendCredentialByBlockCode (SuspendCredentialByBlockCodeRequest) returns (SuspendCredentialResponse);
+    rpc ReplaceVerifiableCredential (ReplaceVerifiableCredentialRequest) returns (ReplaceVerifiableCredentialResponse);
+}
+
+message RecordCredentialRequest {
+    oneof verifiable_credential {
+        NaturalPersonIdentityRegistrationCredential naturalPersonIdentityRegistrationCredential = 1;
+        VerifiedEmailAddressCredential verifiedEmailAddressCredential = 2;
+        X509CertificateCredential x509CertificateCredential = 3;
+    }
+}
+
+message RecordCredentialResponse {
+    message RecordCredentialRejection {
+        enum Reason {
+            DUPLICATE_ACTIVE_CREDENTIAL = 0;
+        }
+        Reason reason = 1;
+        string message = 2;
+    }
+    oneof value {
+        Ok ok = 1;
+        ValidationErrors errors = 2;
+        RecordCredentialRejection rejection = 3;
+    }
+}
+
+
+message SuspendCredentialRequest {
+    Identity identity = 1;
+}
+
+message SuspendCredentialResponse {
+    message SuspendCredentialRejection {
+        enum Reason {
+            NO_ACTIVE_REGISTRATION_CREDENTIAL = 0;
+            NON_MATCHING_BLOCK_CODE = 1;
+        }
+        Reason reason = 1;
+    }
+
+    oneof value {
+        Ok ok = 1;
+        ValidationErrors errors = 2;
+        SuspendCredentialRejection rejection = 3;
+    }
+}
+
+message SuspendCredentialByBlockCodeRequest {
+    Identity identity = 1; // cannot be known by client
+    bytes blockCode = 2;
+}
+
+
+message ReplaceVerifiableCredentialRequest{
+    UUID credentialToReplace = 1;
+    oneof verifiable_credential {
+        NaturalPersonIdentityRegistrationCredential naturalPersonIdentityRegistrationCredential = 2;
+        VerifiedEmailAddressCredential verifiedEmailAddressCredential = 3;
+    }
+}
+
+message ReplaceVerifiableCredentialResponse {
+    message ReplaceVerifiableCredentialRejection {
+        enum Reason {
+            DUPLICATE_ACTIVE_CREDENTIAL = 0;
+            NON_MATCHING_VERIFIABLE_CREDENTIAL = 1;
+            CREDENTIAL_HAS_DIFFERENT_TYPE = 2;
+            CREDENTIALS_HAVE_DIFFERENT_HOLDER = 3;
+        }
+        Reason reason = 1;
+    }
+
+    oneof value {
+        Ok ok = 1;
+        ValidationErrors errors = 2;
+        ReplaceVerifiableCredentialRejection rejection = 3;
+    }
+}
+
+message Ok {
+}
+

@@ -1,0 +1,236 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+package proto.com.cleverbase.core.platform.directory.service;
+
+enum Issuer {
+    QualifiedTrustServiceProvider = 0;
+}
+
+message IssuanceDate {
+    google.protobuf.Timestamp date = 1;
+}
+
+message IdentitySecurityPrincipal {
+    UUID uuid = 1;
+}
+
+enum Nationality {
+    Dutch = 0;
+    German = 1;
+    Irish = 2;
+}
+
+enum Gender {
+    Male = 0;
+    Female = 1;
+}
+enum DocumentType {
+    Passport = 0;
+    IdentityCard = 1;
+}
+
+message UUID {
+    string value = 1;
+}
+
+message Url {
+    string value = 1;
+}
+
+message LocalDate {
+    string value = 1;
+}
+
+message X509CertificateHolder {
+    string certificate_pem = 1;
+}
+
+message LegalIdentityDocument {
+    string id = 1;
+    DocumentType documentType= 2;
+    LocalDate expirationDate = 3;
+    repeated Url photos = 4;
+}
+
+// Verifiable Credential
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/1053556944/verifiable+credential
+
+message NaturalPersonIdentityRegistrationCredential {
+    Issuer issuer = 1;
+    IssuanceDate issuanceDate = 2;
+    IdentitySecurityPrincipal principal = 3;
+    UUID credentialIdByIssuer = 4;
+
+    string firstName = 5;
+    string lastName = 6;
+    LocalDate dateOfBirth = 7;
+    Nationality nationality = 8;
+    Gender gender = 9;
+    string placeOfBirth = 10;
+    Url selfie = 11;
+    LegalIdentityDocument legalIdentityDocument = 12;
+    Signer  signer  = 13;
+    bytes identityBlockCode = 14;
+
+}
+
+message VerifiedEmailAddressCredential {
+    Issuer issuer = 1;
+    IssuanceDate issuanceDate = 2;
+    IdentitySecurityPrincipal principal = 3;
+    UUID credentialIdByIssuer = 4;
+
+    string emailAddress = 5;
+}
+
+// Session
+message SessionId {
+    UUID uuid = 1;
+}
+
+// ---- Identity ----
+
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/921337919/natural+person
+message NaturalPerson {
+    IdentitySecurityPrincipal principal = 1;
+}
+
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/921567405/organization+entity
+message Organization {
+    IdentitySecurityPrincipal principal = 1;
+}
+
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/921501849/trusted+role
+message TrustedProfessional {
+    IdentitySecurityPrincipal principal = 1;
+}
+
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/1051787687/identity
+message Identity {
+    oneof value {
+        NaturalPerson  naturalPerson= 1;
+        Organization organization = 2;
+        TrustedProfessional trustedProfessional = 3;
+    }
+}
+
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/1053622462/certificate
+message X509CertificateCredential {
+    Issuer issuer = 1;
+    IssuanceDate issuanceDate = 2;
+    IdentitySecurityPrincipal principal = 3;
+    UUID credentialIdByIssuer = 4;
+    CertificateType certificateType = 5;
+    X509CertificateHolder certificateHolder = 6;
+}
+
+enum ProfileStatus {
+    Active = 0;
+    Pending = 1;
+    Suspended = 2;
+}
+
+enum CertificateType {
+    DigitalSignatureCertificate = 0;
+    QualifiedCertificate = 1;
+}
+
+enum CertificateStatus {
+    Good = 0;
+    Revoked = 1;
+    Unknown = 2;
+}
+
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/1082819392/bc+ubiqu+asset+token
+message Signer {
+    UUID uuid = 1;
+}
+
+// Verifiable Presentation
+// https://cleverbase.atlassian.net/wiki/spaces/PD/pages/1053688168/verifiable+presentation
+
+message X509CertificateProfile {
+    CertificateType certificateType = 1;
+    X509CertificateHolder certificate = 2;
+    CertificateStatus status = 3;
+    Signer signer = 4;
+}
+
+message NaturalPersonProfile {
+    IdentitySecurityPrincipal principal = 1;
+    ProfileStatus status = 2;
+
+    string firstName = 3;
+    string lastName = 4;
+    LocalDate dateOfBirth = 5;
+    Nationality nationality = 6;
+    Gender gender = 7;
+    string placeOfBirth = 8;
+    Url selfie = 9;
+    LegalIdentityDocument legalIdentityDocument = 10;
+    Signer  signer  = 11;
+    bytes identityBlockCode = 12;
+
+    string emailAddress = 13;
+
+    repeated X509CertificateProfile certificates = 14;
+
+    UUID identityRegistrationCredentialId = 15;
+    UUID verifiableEmailCredentialId = 16;
+}
+
+
+
+enum AttributeKey {
+    IdentityBlockCode = 0;
+    FirstNames = 2;
+    LastName = 3;
+    EmailAddress = 4;
+    DateOfBirth = 5;
+    PlaceOfBirth = 6;
+    Selfie = 7;
+    SignerKey = 9;
+    LegalDocument = 10;
+    NationalityKey = 11;
+    GenderKey = 12;
+    IdentityTypeKey = 13;
+}
+
+message Attribute {
+    AttributeKey attributeKey = 1;
+
+    oneof value {
+        string firstName = 3;
+        string lastName = 4;
+        LocalDate dateOfBirth = 5;
+        Nationality nationality = 6;
+        Gender gender = 7;
+        string placeOfBirth = 8;
+        Url selfie = 9;
+        LegalIdentityDocument legalIdentityDocument = 10;
+        Signer  signer  = 11;
+        bytes identityBlockCode = 12;
+        string emailAddress = 13;
+        IdentityType identityType = 14;
+    }
+}
+
+message ValidationError {
+    enum Code {
+        CODE_UNSPECIFIED = 0;
+        EMPTY_FIELD = 1;
+        INVALID_REQUEST = 2;
+    }
+    Code code = 1;
+    string message = 2;
+}
+
+message ValidationErrors {
+    repeated ValidationError errors = 1;
+}
+
+enum IdentityType {
+    NaturalPersonType = 0;
+    OrganizationType = 1;
+    TrustedProfessionalType = 2;
+}

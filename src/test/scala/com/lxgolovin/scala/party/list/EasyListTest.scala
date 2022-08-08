@@ -5,6 +5,9 @@ import org.scalatest.flatspec.AnyFlatSpec
 class EasyListTest extends AnyFlatSpec {
 
   it should "Throw an error for the head of the empty list" in {
+    val value  = Seq(1, 2)
+    val value1 = Seq("One", "Two", "Three")
+    val z      = value.zip(value1)
     assertThrows[NoSuchElementException](Empty.head)
   }
 
